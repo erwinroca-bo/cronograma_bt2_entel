@@ -1,0 +1,771 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cronograma BT2 – ENTEL S.A.</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap');
+
+  :root {
+    --bg: #F7F5F0;
+    --surface: #FFFFFF;
+    --border: #E4E0D8;
+    --text-primary: #1A1916;
+    --text-secondary: #6B6860;
+    --text-muted: #9E9B94;
+    --accent-orange: #E85D20;
+    --accent-orange-soft: #FDF0EB;
+    --accent-blue: #1A5FA8;
+    --accent-blue-soft: #EBF2FB;
+    --accent-teal: #0F6E56;
+    --accent-teal-soft: #E6F5EF;
+    --accent-amber: #A05A0A;
+    --accent-amber-soft: #FEF3E2;
+    --accent-purple: #4A3AB5;
+    --accent-purple-soft: #EEECFB;
+    --accent-red: #A02020;
+    --accent-red-soft: #FAEAEA;
+    --accent-gray: #4A4A4A;
+    --accent-gray-soft: #F2F2F2;
+    --accent-green: #2D6B15;
+    --accent-green-soft: #EBF5E6;
+    --radius: 10px;
+    --shadow: 0 2px 12px rgba(0,0,0,0.06);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text-primary);
+    min-height: 100vh;
+    padding: 0;
+  }
+
+  /* HEADER */
+  .header {
+    background: var(--text-primary);
+    color: white;
+    padding: 32px 48px 28px;
+    position: relative;
+    overflow: hidden;
+  }
+  .header::after {
+    content: 'BT2';
+    position: absolute;
+    right: -10px;
+    top: -20px;
+    font-size: 160px;
+    font-weight: 600;
+    color: rgba(255,255,255,0.04);
+    letter-spacing: -4px;
+    pointer-events: none;
+    font-family: 'DM Mono', monospace;
+  }
+  .header-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--accent-orange);
+    color: white;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 4px 10px;
+    border-radius: 4px;
+    margin-bottom: 12px;
+  }
+  .header h1 {
+    font-size: 26px;
+    font-weight: 500;
+    letter-spacing: -0.3px;
+    line-height: 1.2;
+    margin-bottom: 6px;
+  }
+  .header-sub {
+    font-size: 13px;
+    color: rgba(255,255,255,0.5);
+    font-weight: 300;
+  }
+  .header-meta {
+    display: flex;
+    gap: 28px;
+    margin-top: 20px;
+  }
+  .meta-item { display: flex; flex-direction: column; gap: 2px; }
+  .meta-label { font-size: 11px; color: rgba(255,255,255,0.4); text-transform: uppercase; letter-spacing: 0.06em; }
+  .meta-value { font-size: 18px; font-weight: 500; font-family: 'DM Mono', monospace; }
+  .meta-value.orange { color: var(--accent-orange); }
+
+  /* KPI STRIP */
+  .kpi-strip {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 16px 48px;
+    display: flex;
+    gap: 0;
+    align-items: center;
+  }
+  .kpi-item {
+    flex: 1;
+    text-align: center;
+    padding: 0 16px;
+    position: relative;
+  }
+  .kpi-item + .kpi-item::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 10%;
+    height: 80%;
+    width: 1px;
+    background: var(--border);
+  }
+  .kpi-val { font-size: 22px; font-weight: 600; font-family: 'DM Mono', monospace; color: var(--accent-orange); }
+  .kpi-lbl { font-size: 11px; color: var(--text-secondary); margin-top: 2px; }
+
+  /* MAIN LAYOUT */
+  .main {
+    padding: 32px 48px 48px;
+    display: grid;
+    grid-template-columns: 1fr 300px;
+    gap: 28px;
+    align-items: start;
+  }
+
+  /* GANTT SECTION */
+  .section-title {
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 16px;
+  }
+
+  .gantt-wrapper {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+  }
+
+  /* Month header */
+  .gantt-header {
+    display: grid;
+    grid-template-columns: 220px 1fr;
+    border-bottom: 1px solid var(--border);
+    background: #FAFAF8;
+  }
+  .gantt-label-header {
+    padding: 10px 16px;
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    border-right: 1px solid var(--border);
+  }
+  .gantt-months {
+    display: flex;
+  }
+  .gantt-month {
+    flex: 1;
+    padding: 10px 0;
+    text-align: center;
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--text-secondary);
+    border-right: 1px solid var(--border);
+    font-family: 'DM Mono', monospace;
+  }
+  .gantt-month:last-child { border-right: none; }
+
+  /* Rows */
+  .gantt-row {
+    display: grid;
+    grid-template-columns: 220px 1fr;
+    border-bottom: 1px solid #F0EDE6;
+    transition: background 0.15s;
+    cursor: pointer;
+  }
+  .gantt-row:last-child { border-bottom: none; }
+  .gantt-row:hover { background: #FDFCFA; }
+  .gantt-row.active { background: #FDF8F5; }
+
+  .gantt-task-info {
+    padding: 12px 16px;
+    border-right: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .task-phase-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .task-name { font-size: 12.5px; font-weight: 500; line-height: 1.3; }
+  .task-code { font-size: 10px; color: var(--text-muted); font-family: 'DM Mono', monospace; margin-top: 1px; }
+
+  .gantt-bar-area {
+    padding: 10px 0;
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+  .gantt-bar-inner {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    position: relative;
+  }
+  .gantt-bar {
+    height: 22px;
+    border-radius: 4px;
+    position: absolute;
+    display: flex;
+    align-items: center;
+    padding: 0 8px;
+    font-size: 10px;
+    font-weight: 500;
+    white-space: nowrap;
+    overflow: hidden;
+    transition: opacity 0.15s;
+  }
+  .gantt-bar:hover { opacity: 0.85; }
+
+  /* Milestone marker */
+  .milestone {
+    position: absolute;
+    top: 50%;
+    transform: translate(-50%, -50%) rotate(45deg);
+    width: 12px;
+    height: 12px;
+    z-index: 2;
+  }
+
+  /* SIDEBAR */
+  .sidebar { display: flex; flex-direction: column; gap: 20px; }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px;
+  }
+  .card-title {
+    font-size: 12px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-muted);
+    margin-bottom: 14px;
+  }
+
+  /* Phase legend */
+  .legend-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 8px 0;
+    border-bottom: 1px solid #F5F3EE;
+    cursor: pointer;
+    transition: background 0.1s;
+    border-radius: 6px;
+    padding-left: 4px;
+  }
+  .legend-item:last-child { border-bottom: none; }
+  .legend-item:hover { background: #FAFAF8; }
+  .legend-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    margin-top: 3px;
+    flex-shrink: 0;
+  }
+  .legend-label { font-size: 12px; font-weight: 500; line-height: 1.3; }
+  .legend-sub { font-size: 11px; color: var(--text-muted); margin-top: 1px; }
+
+  /* Risk card */
+  .risk-item {
+    display: flex;
+    gap: 10px;
+    padding: 8px 0;
+    border-bottom: 1px solid #F5F3EE;
+    font-size: 12px;
+  }
+  .risk-item:last-child { border-bottom: none; }
+  .risk-badge {
+    font-size: 10px;
+    font-weight: 500;
+    padding: 2px 6px;
+    border-radius: 3px;
+    flex-shrink: 0;
+    height: fit-content;
+  }
+  .risk-high { background: #FAEAEA; color: var(--accent-red); }
+  .risk-med  { background: var(--accent-amber-soft); color: var(--accent-amber); }
+  .risk-low  { background: var(--accent-teal-soft); color: var(--accent-teal); }
+
+  /* Milestone list */
+  .ms-item {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+    padding: 8px 0;
+    border-bottom: 1px solid #F5F3EE;
+  }
+  .ms-item:last-child { border-bottom: none; }
+  .ms-icon {
+    width: 18px;
+    height: 18px;
+    background: var(--accent-orange-soft);
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+  .ms-icon svg { width: 10px; height: 10px; }
+  .ms-label { font-size: 12px; font-weight: 500; line-height: 1.3; }
+  .ms-date { font-size: 11px; color: var(--text-muted); font-family: 'DM Mono', monospace; }
+
+  /* Detail panel */
+  .detail-panel {
+    display: none;
+    background: var(--accent-orange-soft);
+    border: 1px solid rgba(232,93,32,0.2);
+    border-radius: var(--radius);
+    padding: 16px 20px;
+    margin-top: 0;
+  }
+  .detail-panel.visible { display: block; }
+  .detail-panel h3 { font-size: 13px; font-weight: 600; color: var(--accent-orange); margin-bottom: 8px; }
+  .detail-panel p { font-size: 12px; color: var(--text-secondary); line-height: 1.6; margin-bottom: 8px; }
+  .detail-tags { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 6px; }
+  .detail-tag {
+    font-size: 10px;
+    font-weight: 500;
+    padding: 2px 7px;
+    border-radius: 3px;
+    background: white;
+    border: 1px solid rgba(232,93,32,0.25);
+    color: var(--accent-orange);
+  }
+
+  /* Progress bar */
+  .progress-row { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+  .progress-label { font-size: 11px; color: var(--text-secondary); width: 80px; flex-shrink: 0; }
+  .progress-track { flex: 1; height: 5px; background: var(--border); border-radius: 3px; overflow: hidden; }
+  .progress-fill { height: 100%; border-radius: 3px; background: var(--accent-orange); }
+  .progress-pct { font-size: 11px; font-family: 'DM Mono', monospace; color: var(--text-muted); width: 32px; text-align: right; }
+
+  /* Go/No-Go badges */
+  .gng-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px; }
+  .gng-item {
+    border-radius: 6px;
+    padding: 8px 6px;
+    text-align: center;
+    border: 1px solid var(--border);
+  }
+  .gng-code { font-size: 11px; font-weight: 600; font-family: 'DM Mono', monospace; }
+  .gng-name { font-size: 10px; color: var(--text-muted); margin-top: 2px; }
+
+  /* FOOTER */
+  .footer {
+    padding: 16px 48px;
+    border-top: 1px solid var(--border);
+    background: var(--surface);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 11px;
+    color: var(--text-muted);
+  }
+  .footer strong { color: var(--text-secondary); font-weight: 500; }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="header-badge">Confidencial · ENTEL S.A.</div>
+  <h1>Plataforma BT2 — Cronograma de Implementación</h1>
+  <div class="header-sub">Business Telecom BRM Platform · Modernización OSS/BSS · RTC USA LLC</div>
+  <div class="header-meta">
+    <div class="meta-item">
+      <span class="meta-label">Duración estimada</span>
+      <span class="meta-value orange">12 meses</span>
+    </div>
+    <div class="meta-item">
+      <span class="meta-label">Fases</span>
+      <span class="meta-value">9</span>
+    </div>
+    <div class="meta-item">
+      <span class="meta-label">Hitos Go/No-Go</span>
+      <span class="meta-value">8</span>
+    </div>
+    <div class="meta-item">
+      <span class="meta-label">Inicio tentativo</span>
+      <span class="meta-value">M1 · 2025</span>
+    </div>
+  </div>
+</div>
+
+<!-- KPI STRIP -->
+<div class="kpi-strip">
+  <div class="kpi-item">
+    <div class="kpi-val">−15/25%</div>
+    <div class="kpi-lbl">Reducción OPEX estimada</div>
+  </div>
+  <div class="kpi-item">
+    <div class="kpi-val">−3%</div>
+    <div class="kpi-lbl">Revenue leakage objetivo</div>
+  </div>
+  <div class="kpi-item">
+    <div class="kpi-val">−40%</div>
+    <div class="kpi-lbl">Time-to-market servicios</div>
+  </div>
+  <div class="kpi-item">
+    <div class="kpi-val">−30%</div>
+    <div class="kpi-lbl">Errores de facturación</div>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+
+  <!-- GANTT -->
+  <div>
+    <div class="section-title">Diagrama de Gantt tentativo · 12 meses</div>
+    <div class="gantt-wrapper">
+      <div class="gantt-header">
+        <div class="gantt-label-header">Fase</div>
+        <div class="gantt-months">
+          <div class="gantt-month">M1</div>
+          <div class="gantt-month">M2</div>
+          <div class="gantt-month">M3</div>
+          <div class="gantt-month">M4</div>
+          <div class="gantt-month">M5</div>
+          <div class="gantt-month">M6</div>
+          <div class="gantt-month">M7</div>
+          <div class="gantt-month">M8</div>
+          <div class="gantt-month">M9</div>
+          <div class="gantt-month">M10</div>
+          <div class="gantt-month">M11</div>
+          <div class="gantt-month">M12</div>
+        </div>
+      </div>
+
+      <div id="gantt-rows"></div>
+    </div>
+
+    <!-- Detail panel -->
+    <div class="detail-panel" id="detail-panel" style="margin-top:12px">
+      <h3 id="dp-title">–</h3>
+      <p id="dp-desc">–</p>
+      <div id="dp-entregables"></div>
+    </div>
+
+    <!-- Go/No-Go grid -->
+    <div style="margin-top:20px">
+      <div class="section-title">Hitos Go / No-Go</div>
+      <div class="gng-grid" id="gng-grid"></div>
+    </div>
+  </div>
+
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+
+    <!-- Legend -->
+    <div class="card">
+      <div class="card-title">Fases del proyecto</div>
+      <div id="legend-list"></div>
+    </div>
+
+    <!-- Progress by domain -->
+    <div class="card">
+      <div class="card-title">Alcance funcional</div>
+      <div class="progress-row">
+        <div class="progress-label">BSS</div>
+        <div class="progress-track"><div class="progress-fill" style="width:100%"></div></div>
+        <div class="progress-pct">100%</div>
+      </div>
+      <div class="progress-row">
+        <div class="progress-label">OSS</div>
+        <div class="progress-track"><div class="progress-fill" style="width:100%"></div></div>
+        <div class="progress-pct">100%</div>
+      </div>
+      <div class="progress-row">
+        <div class="progress-label">Rev. Mgmt</div>
+        <div class="progress-track"><div class="progress-fill" style="width:100%"></div></div>
+        <div class="progress-pct">100%</div>
+      </div>
+      <div class="progress-row">
+        <div class="progress-label">Integración</div>
+        <div class="progress-track"><div class="progress-fill" style="width:85%"></div></div>
+        <div class="progress-pct">85%</div>
+      </div>
+      <div class="progress-row">
+        <div class="progress-label">Satelital</div>
+        <div class="progress-track"><div class="progress-fill" style="width:70%"></div></div>
+        <div class="progress-pct">70%</div>
+      </div>
+      <div class="progress-row">
+        <div class="progress-label">Analytics</div>
+        <div class="progress-track"><div class="progress-fill" style="width:60%"></div></div>
+        <div class="progress-pct">60%</div>
+      </div>
+      <div style="font-size:10px;color:var(--text-muted);margin-top:8px">Cobertura prevista al cierre de implementación</div>
+    </div>
+
+    <!-- Riesgos -->
+    <div class="card">
+      <div class="card-title">Riesgos clave</div>
+      <div class="risk-item">
+        <span class="risk-badge risk-high">ALTO</span>
+        <div>
+          <div style="font-size:12px;font-weight:500;margin-bottom:2px">Migración de datos</div>
+          <div style="font-size:11px;color:var(--text-muted)">Integridad de datos históricos de clientes y facturación</div>
+        </div>
+      </div>
+      <div class="risk-item">
+        <span class="risk-badge risk-high">ALTO</span>
+        <div>
+          <div style="font-size:12px;font-weight:500;margin-bottom:2px">Continuidad operativa</div>
+          <div style="font-size:11px;color:var(--text-muted)">Servicios activos durante transición</div>
+        </div>
+      </div>
+      <div class="risk-item">
+        <span class="risk-badge risk-med">MEDIO</span>
+        <div>
+          <div style="font-size:12px;font-weight:500;margin-bottom:2px">Integración de red</div>
+          <div style="font-size:11px;color:var(--text-muted)">Complejidad de interfaces con core móvil y GPON</div>
+        </div>
+      </div>
+      <div class="risk-item">
+        <span class="risk-badge risk-med">MEDIO</span>
+        <div>
+          <div style="font-size:12px;font-weight:500;margin-bottom:2px">Adopción del personal</div>
+          <div style="font-size:11px;color:var(--text-muted)">Curva de aprendizaje operativo</div>
+        </div>
+      </div>
+      <div class="risk-item">
+        <span class="risk-badge risk-low">BAJO</span>
+        <div>
+          <div style="font-size:12px;font-weight:500;margin-bottom:2px">Infraestructura TI</div>
+          <div style="font-size:11px;color:var(--text-muted)">Dimensionamiento de servidores y almacenamiento</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Mitigaciones -->
+    <div class="card">
+      <div class="card-title">Controles de mitigación</div>
+      <div style="font-size:12px;color:var(--text-secondary);line-height:1.7">
+        <div style="margin-bottom:6px">• Respaldo completo de BD antes de cada fase</div>
+        <div style="margin-bottom:6px">• Operación paralela en facturación y Rev. Assurance</div>
+        <div style="margin-bottom:6px">• Plan de reversión documentado por fase</div>
+        <div style="margin-bottom:6px">• Monitoreo permanente post-migración</div>
+        <div>• Entornos de prueba aislados del productivo</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- FOOTER -->
+<div class="footer">
+  <div>Documento de planificación preliminar · <strong>BT2 Business Telecom BRM Platform</strong> · RTC USA LLC</div>
+  <div>Duración real sujeta a diagnóstico AS-IS en Fase F1</div>
+</div>
+
+<script>
+const PHASES = [
+  {
+    code: 'F1',
+    name: 'Análisis y Requerimientos',
+    start: 0, dur: 1.5,
+    color: '#E85D20', colorSoft: '#FDF0EB',
+    desc: 'Levantamiento de procesos actuales de ENTEL, identificación de sistemas existentes BSS/OSS, definición de alcance técnico y Gap Analysis AS-IS/TO-BE.',
+    entregables: ['Inventario de sistemas', 'Gap analysis', 'Plan de proyecto', 'Análisis de riesgos'],
+    gng: true, gngMonth: 1.5
+  },
+  {
+    code: 'F2',
+    name: 'Diseño de Solución',
+    start: 1.5, dur: 1.5,
+    color: '#1A5FA8', colorSoft: '#EBF2FB',
+    desc: 'Arquitectura de implementación, diseño de integraciones con sistemas existentes, modelo de datos adaptado al entorno ENTEL y definición de interfaces.',
+    entregables: ['Arquitectura técnica', 'Diseño de interfaces', 'Modelo de datos', 'Especificaciones de integración'],
+    gng: true, gngMonth: 3
+  },
+  {
+    code: 'F3',
+    name: 'Infraestructura TI',
+    start: 2.5, dur: 1.5,
+    color: '#4A3AB5', colorSoft: '#EEECFB',
+    desc: 'Instalación de servidores de aplicación y bases de datos, configuración de virtualización y almacenamiento conforme al diseño aprobado.',
+    entregables: ['Servidores instalados', 'BD configuradas', 'Entornos definidos'],
+    gng: true, gngMonth: 4
+  },
+  {
+    code: 'F4',
+    name: 'Implementación Plataforma',
+    start: 3.5, dur: 2,
+    color: '#0F6E56', colorSoft: '#E6F5EF',
+    desc: 'Instalación de módulos BSS y OSS, configuración funcional, parametrización de servicios de ENTEL, configuración de tarifas y catálogo de productos.',
+    entregables: ['Módulos BSS activos', 'Módulos OSS activos', 'Catálogo configurado', 'Motor de tasación'],
+    gng: true, gngMonth: 5.5
+  },
+  {
+    code: 'F5',
+    name: 'Integración con Sistemas',
+    start: 4.5, dur: 2,
+    color: '#A05A0A', colorSoft: '#FEF3E2',
+    desc: 'Integración con plataformas de red (core móvil, GPON, satelital), sistemas financieros y ERP, plataformas regulatorias y sistemas de pago.',
+    entregables: ['Integración de red', 'Integración financiera', 'APIs regulatorias', 'Pruebas conectividad'],
+    gng: true, gngMonth: 6.5
+  },
+  {
+    code: 'F6',
+    name: 'Migración de Datos',
+    start: 5.5, dur: 2,
+    color: '#A02020', colorSoft: '#FAEAEA',
+    desc: 'Extracción ETL de datos desde sistemas origen, transformación y normalización al modelo BT2, carga controlada con validación y conciliación de totales.',
+    entregables: ['Datos clientes migrados', 'Contratos migrados', 'Historial facturación', 'Validación conciliada'],
+    gng: true, gngMonth: 7.5
+  },
+  {
+    code: 'F7',
+    name: 'Pruebas del Sistema',
+    start: 7, dur: 2,
+    color: '#2D6B15', colorSoft: '#EBF5E6',
+    desc: 'Pruebas funcionales por módulo, pruebas de integración end-to-end, pruebas de rendimiento bajo carga y validación completa del ciclo de facturación.',
+    entregables: ['Pruebas funcionales', 'Pruebas integración', 'Pruebas de carga', 'UAT aprobado'],
+    gng: true, gngMonth: 9
+  },
+  {
+    code: 'F8',
+    name: 'Capacitación',
+    start: 8.5, dur: 1.5,
+    color: '#4A4A4A', colorSoft: '#F2F2F2',
+    desc: 'Formación técnica para equipos de TI, capacitación operativa y administrativa, formación para atención al cliente. Validación de adopción y autonomía operativa.',
+    entregables: ['Personal TI capacitado', 'Operaciones capacitadas', 'Atención al cliente', 'Manuales entregados'],
+    gng: false
+  },
+  {
+    code: 'F9',
+    name: 'Puesta en Producción',
+    start: 9.5, dur: 2.5,
+    color: '#E85D20', colorSoft: '#FDF0EB',
+    desc: 'Activación en entorno productivo, operación paralela durante período de validación, monitoreo intensivo inicial y cierre formal del proyecto.',
+    entregables: ['Activación productiva', 'Operación paralela', 'Monitoreo intensivo', 'Cierre del proyecto'],
+    gng: true, gngMonth: 12
+  }
+];
+
+const TOTAL_MONTHS = 12;
+
+function pct(v) { return (v / TOTAL_MONTHS * 100).toFixed(2) + '%'; }
+
+// Build gantt rows
+const rowsContainer = document.getElementById('gantt-rows');
+PHASES.forEach((p, i) => {
+  const row = document.createElement('div');
+  row.className = 'gantt-row';
+  row.id = 'row-' + i;
+
+  const left = (p.start / TOTAL_MONTHS * 100).toFixed(2);
+  const width = (p.dur / TOTAL_MONTHS * 100).toFixed(2);
+
+  row.innerHTML = `
+    <div class="gantt-task-info">
+      <div class="task-phase-dot" style="background:${p.color}"></div>
+      <div>
+        <div class="task-name">${p.name}</div>
+        <div class="task-code">${p.code} · ${p.dur <= 1 ? p.dur * 4 + ' sem' : p.dur + ' meses'}</div>
+      </div>
+    </div>
+    <div class="gantt-bar-area">
+      <div class="gantt-bar-inner">
+        <div class="gantt-bar" 
+             style="left:${left}%;width:${width}%;background:${p.colorSoft};border:1px solid ${p.color}30;color:${p.color}">
+          ${p.code}
+        </div>
+        ${p.gng ? `<div class="milestone" style="left:calc(${(p.gngMonth/TOTAL_MONTHS*100).toFixed(2)}%);background:${p.color};border-radius:2px"></div>` : ''}
+      </div>
+    </div>`;
+
+  row.addEventListener('click', () => showDetail(i, row));
+  rowsContainer.appendChild(row);
+});
+
+// Build legend
+const legendContainer = document.getElementById('legend-list');
+PHASES.forEach((p, i) => {
+  const item = document.createElement('div');
+  item.className = 'legend-item';
+  item.innerHTML = `
+    <div class="legend-dot" style="background:${p.color}"></div>
+    <div>
+      <div class="legend-label">${p.code} · ${p.name}</div>
+      <div class="legend-sub">${p.start === 0 ? 'Inicio' : 'M' + (Math.ceil(p.start)+1)} → M${Math.ceil(p.start + p.dur)}</div>
+    </div>`;
+  item.addEventListener('click', () => {
+    document.getElementById('row-' + i).click();
+    document.getElementById('row-' + i).scrollIntoView({behavior:'smooth', block:'center'});
+  });
+  legendContainer.appendChild(item);
+});
+
+// Build GNG grid
+const gngPhases = PHASES.filter(p => p.gng);
+const gngContainer = document.getElementById('gng-grid');
+gngPhases.forEach(p => {
+  const item = document.createElement('div');
+  item.className = 'gng-item';
+  item.style.background = p.colorSoft;
+  item.style.borderColor = p.color + '40';
+  item.innerHTML = `
+    <div class="gng-code" style="color:${p.color}">${p.code}</div>
+    <div class="gng-name">M${Math.ceil(p.start + p.dur)}</div>`;
+  gngContainer.appendChild(item);
+});
+
+// Detail panel
+let activeRow = null;
+function showDetail(i, rowEl) {
+  if (activeRow) activeRow.classList.remove('active');
+  if (activeRow === rowEl) {
+    activeRow = null;
+    document.getElementById('detail-panel').classList.remove('visible');
+    return;
+  }
+  activeRow = rowEl;
+  rowEl.classList.add('active');
+
+  const p = PHASES[i];
+  const panel = document.getElementById('detail-panel');
+  document.getElementById('dp-title').textContent = p.code + ' · ' + p.name;
+  document.getElementById('dp-title').style.color = p.color;
+  panel.style.background = p.colorSoft;
+  panel.style.borderColor = p.color + '35';
+  document.getElementById('dp-desc').textContent = p.desc;
+  document.getElementById('dp-entregables').innerHTML =
+    '<div style="font-size:10px;font-weight:500;color:#888;text-transform:uppercase;letter-spacing:.07em;margin-bottom:5px">Entregables principales</div>' +
+    '<div class="detail-tags">' +
+    p.entregables.map(e => `<span class="detail-tag" style="color:${p.color};border-color:${p.color}25">${e}</span>`).join('') +
+    '</div>';
+  panel.classList.add('visible');
+}
+</script>
+</body>
+</html>
